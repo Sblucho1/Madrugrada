@@ -1,0 +1,5 @@
+{
+  "name": "GuardiaAI ",
+  "description": "Clinical decision support tool for emergency syndromic management based on signs, symptoms, and labs.",
+  "requestFramePermissions": []
+}
