@@ -1,13 +1,54 @@
-import React from 'react';
-import { UserPlus, ClipboardList, Clock, Download, FileText } from 'lucide-react';
+import React, { useRef } from 'react';
+import { UserPlus, ClipboardList, Clock, Download, FileText, Upload, Database } from 'lucide-react';
+import { PatientData } from '../types';
 
 interface DashboardProps {
   onNavigate: (view: 'input' | 'list-seen' | 'list-pending') => void;
   pendingCount: number;
   onInstall?: () => void;
+  onExportData?: () => void;
+  onImportData?: (data: PatientData[]) => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, pendingCount, onInstall }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ 
+  onNavigate, 
+  pendingCount, 
+  onInstall,
+  onExportData,
+  onImportData
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !onImportData) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          const data = JSON.parse(result);
+          if (Array.isArray(data)) {
+            onImportData(data);
+          } else {
+            alert("El archivo no tiene un formato válido (debe ser una lista de pacientes).");
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing backup file:", error);
+        alert("Error al leer el archivo de respaldo.");
+      }
+      // Reset input so the same file can be selected again if needed
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4 animate-in fade-in zoom-in duration-300">
       
@@ -75,6 +116,47 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, pendingCount, 
         </button>
 
       </div>
+
+      {/* Backup & Restore Controls */}
+      {(onExportData || onImportData) && (
+        <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+                <Database className="w-4 h-4" />
+                <span className="font-medium">Gestión de Datos Locales</span>
+            </div>
+            <div className="flex gap-3">
+                {onExportData && (
+                    <button 
+                        onClick={onExportData}
+                        className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-sm text-slate-700 hover:text-slate-900"
+                        title="Descargar copia de seguridad de todos los pacientes"
+                    >
+                        <Download className="w-4 h-4" />
+                        Exportar Backup
+                    </button>
+                )}
+                {onImportData && (
+                    <>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept=".json"
+                            onChange={handleFileChange}
+                        />
+                        <button 
+                            onClick={handleImportClick}
+                            className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-sm text-slate-700 hover:text-slate-900"
+                            title="Restaurar pacientes desde un archivo .json"
+                        >
+                            <Upload className="w-4 h-4" />
+                            Restaurar
+                        </button>
+                    </>
+                )}
+            </div>
+        </div>
+      )}
     </div>
   );
 };
