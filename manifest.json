@@ -1,20 +1,22 @@
 {
-  "short_name": "GuardiaAI",
-  "name": "GuardiaAI - Manejo Sindrómico",
-  "icons": [
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063176.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063176.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#2563eb",
-  "background_color": "#f1f5f9"
+  "short_name": "GuardiaAI",
+  "name": "GuardiaAI - Manejo Sindrómico",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063176.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063176.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  // CORRECCIÓN CLAVE: Usar "./" asegura que la PWA cargue la página 
+  // principal (index.html) desde el directorio actual al ser instalada.
+  "start_url": "./", 
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f1f5f9"
 }
