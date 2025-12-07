@@ -4,12 +4,12 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, (process as any).cwd(), '');
   
   return {
     plugins: [react()],
-    // 'base: "./"' ensures assets are loaded relatively (crucial for GitHub Pages)
+    // CONFIGURACIÓN CRÍTICA: 'base: "./"' asegura que los assets se carguen con rutas relativas.
+    // Esto es necesario para despliegues manuales (drag & drop) en Netlify.
     base: './', 
     define: {
       // Define process.env.API_KEY specifically to avoid exposing all env vars
